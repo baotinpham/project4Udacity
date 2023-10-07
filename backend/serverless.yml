@@ -6,9 +6,12 @@ plugins:
   - serverless-plugin-tracing
   - serverless-aws-documentation
 
+package:
+  individually: true
+
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs16.x
   lambdaHashingVersion: '20201221'
 
   stage: ${opt:stage, 'dev'}
@@ -23,7 +26,7 @@ provider:
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-tinpb-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-tinpb-v1-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
 
   logs:
@@ -221,6 +224,11 @@ resources:
     AttachmentsBucket:
       Type: AWS::S3::Bucket
       Properties:
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
         BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
         CorsConfiguration:
           CorsRules:

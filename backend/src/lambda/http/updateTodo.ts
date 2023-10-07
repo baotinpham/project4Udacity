@@ -14,9 +14,22 @@ export const handler = middy(
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
     // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
 
-
-    return undefined
-)
+    const userId = getUserId(event)
+    try{
+      const item = await updateTodo(userId, todoId, updatedTodo)
+      return {
+        statusCode: 201,
+        body: ''
+      }
+    }catch(e) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          erorr: e
+        })
+      }
+    }
+  })
 
 handler
   .use(httpErrorHandler())
